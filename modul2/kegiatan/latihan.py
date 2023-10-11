@@ -7,30 +7,32 @@ expenses = [
 
 # TODO 1 Buatlah Fungsi add_expense disini untuk
 # menambahkan pengeluaran baru ke dalam expenses. Jangan lupa gunakan pure-function.
-def add_expense(date, description, amount):
+def add_expense(expenses, date, description, amount):
+    new_expenses = expenses[:]
     new_expense = {"tanggal": date, "deskripsi": description, "jumlah": amount}
-    return expenses + [new_expense]
+    new_expenses + [new_expense]
+    return new_expenses
 
 
 # TODO 2 Buatlah fungsi calculate_total_expenses disini
 # menggunakan lambda expression untuk menghitung total pengeluaran harian.
-calculate_total_expenses = lambda date: sum(
+calculate_total_expenses = lambda expenses, date: sum(
     expense["jumlah"] for expense in expenses if expense["tanggal"] == date
 )
 
 
 # TODO 3 Buatlah fungsi get_expenses_by_date disini menggunakan
 # list comprehension untuk menyaring pengeluaran berdasarkan tanggal tertentu.
-def get_expenses_by_date(date):
+def get_expenses_by_date(expenses, date):
     return [expense for expense in expenses if expense["tanggal"] == date]
 
 
 # TODO 4 Buatlah fungsi generate_expenses_report disini
 # sebagai generator untuk menghasilkan laporan pengeluaran harian dalam bentuk string.
-def generate_expenses_report():
+def generate_expenses_report(expenses):
     for date in set(expense["tanggal"] for expense in expenses):
-        total = calculate_total_expenses(date)
-        expenses_on_date = get_expenses_by_date(date)
+        total = calculate_total_expenses(expenses, date)
+        expenses_on_date = get_expenses_by_date(expenses, date)
         detail = ", ".join(
             [
                 f"{expense['deskripsi']} - Rp {expense['jumlah']}"
@@ -41,6 +43,8 @@ def generate_expenses_report():
         yield report
 
 
+
+
 get_user_input = lambda command: int(input(command))
 
 
@@ -48,22 +52,22 @@ def add_expense_interactively(expenses):
     date = input("Masukkan tanggal pengeluaran (YYYY-MM-DD): ")
     description = input("Masukkan deskripsi pengeluaran: ")
     amount = int(input("Masukkan jumlah pengeluaran: "))
-    new_expenses = add_expense(date, description, amount)
+    new_expenses = add_expense(expenses, date, description, amount)
     print("Pengeluaran berhasil ditambahkan.")
     return new_expenses
 
 
-def view_expenses_by_date():
+def view_expenses_by_date(expenses):
     date = input("Masukkan tanggal (YYYY-MM-DD): ")
-    expenses_on_date = get_expenses_by_date(date)
+    expenses_on_date = get_expenses_by_date(expenses, date)
     print(f"\nPengeluaran pada tanggal {date}:")
     for expense in expenses_on_date:
         print(f"{expense['deskripsi']} - Rp {expense['jumlah']}")
 
 
-def view_expenses_report():
+def view_expenses_report(expenses):
     print("\nLaporan Pengeluaran Harian:")
-    expenses_report = generate_expenses_report()
+    expenses_report = generate_expenses_report(expenses)
     for entry in expenses_report:
         print(entry)
 
@@ -87,12 +91,12 @@ def main():
             expenses = add_expense_interactively(expenses)
         elif choice == 2:
             date = input("Masukkan tanggal (YYYY-MM-DD): ")
-            total_expenses = calculate_total_expenses(date)
+            total_expenses = calculate_total_expenses(expenses, date)
             print(f"\nTotal Pengeluaran Harian: Rp {total_expenses}")
         elif choice == 3:
-            view_expenses_by_date()
+            view_expenses_by_date(expenses)
         elif choice == 4:
-            view_expenses_report()
+            view_expenses_report(expenses)
         elif choice == 5:
             print("Terima kasih telah menggunakan aplikasi kami.")
             break
